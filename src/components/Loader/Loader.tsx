@@ -1,7 +1,8 @@
+import React from "react";
 import { FadeLoader } from "react-spinners";
 import css from "./Loader.module.css";
 
-export default function Loader() {
+const Loader: React.FC = () => {
   return (
     <div className={css.Loader}>
       <FadeLoader
@@ -13,4 +14,6 @@ export default function Loader() {
       />
     </div>
   );
-}
+};
+
+export default Loader;

@@ -2,44 +2,61 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-import SearchBar from "./SearchBar/SearchBar.jsx";
-import ImageGallery from "./ImageGallery/ImageGallery.jsx";
+import SearchBar from "../SearchBar/SearchBar.js";
+import ImageGallery from "../ImageGallery/ImageGallery.js";
 
-import ImageModal from "./ImageModal/ImageModal.jsx";
+import ImageModal from "../ImageModal/ImageModal.js";
 
-import Loader from "./Loader/Loader.jsx";
-import ErrorMessage from "./ErrorMessage/ErrorMessage.jsx";
-import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn.jsx";
+import Loader from "../Loader/Loader.js";
+import ErrorMessage from "../ErrorMessage/ErrorMessage.js";
+import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn.js";
 
 ////
-import React from "react";
 import Modal from "react-modal";
-
 Modal.setAppElement("#root");
 /////
 
+////TYPISATION
+export interface GetImg {
+  id: string;
+  alt_description: string | null;
+  urls: {
+    small: string;
+    regular: string;
+  };
+  user: {
+    name: string;
+  };
+}
+
+interface Response {
+  results: GetImg[];
+  total: number;
+}
+////
+
 function App() {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState("");
+  const [images, setImages] = useState<GetImg[]>([]);
+  const [query, setQuery] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalImage, setModalImage] = useState(false);
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+  const [modalImage, setModalImage] = useState<GetImg | null>(null);
 
-  const [page, setPage] = useState(1);
-  const [totalImages, setTotalImages] = useState(0);
-  const [visible, setVisible] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [totalImages, setTotalImages] = useState<number>(0);
+  const [visible, setVisible] = useState<number>(0);
 
-  async function fetchImages(search, pageNum) {
+  async function fetchImages(search: string, pageNum: number): Promise<void> {
     if (loading) return;
 
     try {
       setLoading(true);
 
       const accessKey = "rQ-bYsY6JCiKCtNuToGFcv9fTdNQFxnXyN6vXONnhyQ";
-      const response = await axios.get(
+      const response = await axios.get<Response>(
         `https://api.unsplash.com/search/photos`,
         {
           params: {
@@ -73,7 +90,7 @@ function App() {
     }
   }
 
-  async function handleSearch(topic) {
+  function handleSearch(topic: string): void {
     if (topic !== query) {
       setImages([]);
       setPage(1);
@@ -83,23 +100,23 @@ function App() {
     }
   }
 
-  ////PAGINATION
-  const handleOnLoadMore = () => {
+  ////PAGINATION ///
+  const handleOnLoadMore = (): void => {
     if (loading || visible >= totalImages) return;
     const nextPage = page + 1;
     setPage(nextPage);
   };
   ///
 
-  ////MODAL
-  function openModal(image) {
+  ////MODAL ///
+  function openModal(image: GetImg): void {
     setIsOpen(true);
     setModalImage(image);
   }
 
-  function closeModal() {
+  function closeModal(): void {
     setIsOpen(false);
-    setModalImage(false);
+    setModalImage(null);
   }
   ///
 
